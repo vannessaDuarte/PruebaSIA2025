@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Gestión de Posada{% endblock %}
+
+{% block content %}
+<div class="container">
+    
+    <header class="text-center mb-5 p-4 bg-light rounded shadow-sm">
+        <h1 class="display-4 text-primary">Sistema de Gestión de Posada 🏨</h1>
+        <p class="lead text-muted">Panel de control central para clientes, habitaciones y reservas.</p>
+    </header>
+
+    <div class="row g-4">
+        
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <i class="fas fa-users fa-2x"></i>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title mt-2">Gestión de **Clientes**</h5>
+                    <p class="card-text text-muted small flex-grow-1">Administración de huéspedes, datos de contacto y DNI.</p>
+                    
+                    <a href="{% url 'crear_cliente' %}" class="btn btn-primary btn-sm mb-2">
+                        <i class="fas fa-user-plus me-1"></i> Agregar Cliente
+                    </a>
+                    <a href="{% url 'lista_clientes' %}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-1"></i> Ver Listado
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-success text-white text-center py-3">
+                    <i class="fas fa-calendar-check fa-2x"></i>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title mt-2">Gestión de **Reservas**</h5>
+                    <p class="card-text text-muted small flex-grow-1">Control de la ocupación, validación de disponibilidad y precios.</p>
+                    
+                    <a href="{% url 'crear_reserva' %}" class="btn btn-success btn-sm mb-2">
+                        <i class="fas fa-plus me-1"></i> Crear Reserva
+                    </a>
+                    <a href="{% url 'lista_reservas' %}" class="btn btn-outline-success btn-sm">
+                        <i class="fas fa-search me-1"></i> Ver Reservas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-lg border-0 h-100">
+                <div class="card-header bg-info text-white text-center py-3">
+                    <i class="fas fa-bed fa-2x"></i>
+                </div>
+                <div class="card-body text-center d-flex flex-column">
+                    <h5 class="card-title mt-2">Gestión de **Habitaciones**</h5>
+                    <p class="card-text text-muted small flex-grow-1">Inventario, números, tipos de habitación y precios base.</p>
+                    
+                    <a href="{% url 'crear_habitacion' %}" class="btn btn-info btn-sm mb-2">
+                        <i class="fas fa-door-open me-1"></i> Agregar Habitación
+                    </a>
+                    <a href="{% url 'lista_habitaciones' %}" class="btn btn-outline-info btn-sm">
+                        <i class="fas fa-hotel me-1"></i> Ver Inventario
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+</div>
+{% endblock %}

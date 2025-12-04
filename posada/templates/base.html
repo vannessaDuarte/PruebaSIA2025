@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestión de Posada{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLMDJ/8K+b4/6A6iXmG2V8S2L5rB6a5F9jB6E5eX8t+6jX6g+LgI7Jb0g1+Q=" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Estilo opcional para que el footer se quede abajo y el contenido ocupe la altura */
+        body { min-height: 100vh; display: flex; flex-direction: column; }
+        main { flex-grow: 1; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+            <i class="fas fa-hotel me-2"></i> Posada Central
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'lista_reservas' %}">Reservas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'lista_clientes' %}">Clientes</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'lista_habitaciones' %}">Habitaciones</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-warning" href="/admin/" target="_blank">Admin</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    
+    <main class="py-4">
+        {% block content %}
+            {% endblock %}
+    </main>
+    
+    <footer class="bg-light text-center py-3 mt-auto border-top">
+        <div class="container">
+            <p class="mb-0 text-muted small">&copy; 2025 Sistema de Gestión de Posada. Desarrollado con Django y Bootstrap.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>

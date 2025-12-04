@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% load widget_tweaks %}
+
+{% block title %}Crear/Editar Habitación{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{% if form.instance.pk %}Editar Habitación{% else %}Agregar Nueva Habitación{% endif %}</h2>
+    <hr>
+    
+    <form method="post" id="habitacionForm">
+        {% csrf_token %}
+        
+        {% for field in form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                
+                {% if field.name == 'tipo' %}
+                    <div class="input-group">
+                        {{ field|add_class:"form-control" }}
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#modalCrearTipo" title="Crear nuevo tipo de habitación">
+                            <i class="fas fa-plus-circle"></i> Agregar Tipo
+                        </button>
+                    </div>
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger mt-1 small">{{ error }}</div>
+                    {% endfor %}
+                {% else %}
+                    {{ field|add_class:"form-control" }}
+                    {% if field.help_text %}
+                        <div class="form-text">{{ field.help_text }}</div>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger mt-1 small">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                
+            </div>
+        {% endfor %}
+        
+        <button type="submit" class="btn btn-success">Guardar Habitación</button>
+        <a href="{% url 'lista_habitaciones' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<div class="modal fade" id="modalCrearTipo" tabindex="-1" aria-labelledby="modalCrearTipoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="formTipoHabitacion" method="post" action="{% url 'ajax_crear_tipo_habitacion' %}">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCrearTipoLabel">➕ Crear Nuevo Tipo de Habitación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {% if tipo_form_modal %}
+                        {% for field in tipo_form_modal %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                {{ field|add_class:"form-control" }} 
+                                
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1 small">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                         <p class="text-danger">Error: El formulario de Tipo de Habitación (tipo_form_modal) no está disponible en el contexto.</p>
+                    {% endif %}
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" id="btnGuardarTipo">Guardar y Seleccionar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block scripts %}
+    {{ block.super }} 
+    <script>
+    document.getElementById('formTipoHabitacion').addEventListener('submit', function(e) {
+        e.preventDefault(); // Detiene el envío normal
+        
+        const form = e.target;
+        // Asumimos que el select principal tiene el ID 'id_tipo'
+        const selectTipo = document.getElementById('id_tipo'); 
+        
+        // Muestra un mensaje de carga (Opcional)
+        document.getElementById('btnGuardarTipo').disabled = true;
+
+        fetch(form.action, {
+            method: 'POST',
+            body: new FormData(form),
+            headers: {
+                // Envía el token CSRF para la seguridad de Django
+                'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value 
+            }
+        })
+        .then(response => {
+            // Maneja respuestas 400 (errores de validación) y 200 (éxito)
+            if (!response.ok) {
+                // Si es un error 400, necesitamos el JSON para mostrar los errores
+                return response.json().then(data => Promise.reject(data));
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Lógica de Éxito (Respuesta 200 OK)
+            
+            // 1. Ocultar el modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearTipo'));
+            if (modal) {
+                modal.hide();
+            }
+            
+            // 2. Limpiar el formulario y seleccionar la nueva opción
+            form.reset(); 
+            const newOption = new Option(data.nombre, data.id, true, true);
+            selectTipo.add(newOption);
+            
+            alert(`Tipo de Habitación "${data.nombre}" creado y seleccionado correctamente.`);
+        })
+        .catch(errorData => {
+            // Lógica de Error (Generalmente, error 400 de validación)
+            let errorMessage = 'Error desconocido al procesar la solicitud.';
+            
+            if (errorData.errors) {
+                // Si Django devolvió errores de formulario
+                errorMessage = 'Errores de validación:<br><ul>';
+                for (const field in errorData.errors) {
+                    errorMessage += `<li><strong>${field.charAt(0).toUpperCase() + field.slice(1)}:</strong> ${errorData.errors[field].join(', ')}</li>`;
+                }
+                errorMessage += '</ul>';
+            } else if (errorData.message) {
+                errorMessage = errorData.message;
+            }
+            
+            // Muestra los errores
+            alert(`No se pudo crear el tipo de habitación. \n${errorMessage.replace(/<br>/g, '\n').replace(/<\/?ul>|<\/?li>/g, '')}`);
+
+        })
+        .finally(() => {
+            // Restablece el botón después de la ejecución
+            document.getElementById('btnGuardarTipo').disabled = false;
+        });
+    });
+    </script>
+{% endblock scripts %}
