@@ -23,7 +23,7 @@ class TipoHabitacion(models.Model):
 class Habitacion(models.Model):
     numero = models.CharField(max_length=10, unique=True)
     # Relación de clave foránea con TipoHabitacion
-    tipo = models.ForeignKey(TipoHabitacion, on_delete=models.PROTECT, related_name='habitaciones')
+    tipo = models.ForeignKey('TipoHabitacion', on_delete=models.PROTECT, related_name='habitaciones')
     piso = models.IntegerField()
     capacidad = models.IntegerField(default=2)
 

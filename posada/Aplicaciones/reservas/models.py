@@ -13,7 +13,7 @@ class Reserva(models.Model):
     ]
 
     # Clave Foránea al modelo Cliente (de la app clientes)
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='reservas')
+    cliente = models.ForeignKey('Cliente',  related_name='reservas')
     # Clave Foránea al modelo Habitacion (de la app habitaciones)
     habitacion = models.ForeignKey(Habitacion, on_delete=models.PROTECT, related_name='reservas')
     
